@@ -1,0 +1,909 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cafe Menu</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background: #f7f3ee;
+            color: #2d241f;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #241813, #4a2c20);
+            color: white;
+            padding: 32px 20px;
+        }
+
+        .header-content {
+            max-width: 1100px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .brand h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .brand p {
+            color: #d9c5b8;
+            font-size: 14px;
+        }
+
+        .cart-button {
+            border: none;
+            background: #d69b62;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: .2s;
+        }
+
+        .cart-button:hover {
+            background: #bd814b;
+            transform: translateY(-2px);
+        }
+
+        /* Main */
+        main {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Search */
+        .search-box {
+            position: relative;
+            margin-bottom: 22px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 1px solid #e1d6cd;
+            border-radius: 14px;
+            outline: none;
+            background: white;
+            font-size: 15px;
+        }
+
+        .search-box input:focus {
+            border-color: #b8794b;
+        }
+
+        /* Categories */
+        .categories {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 28px;
+        }
+
+        .category {
+            flex-shrink: 0;
+            border: 1px solid #dfd2c8;
+            background: white;
+            color: #5d4639;
+            padding: 10px 17px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: .2s;
+        }
+
+        .category:hover {
+            border-color: #b8794b;
+        }
+
+        .category.active {
+            background: #4a2c20;
+            color: white;
+            border-color: #4a2c20;
+        }
+
+        /* Products */
+        .section-title {
+            margin-bottom: 18px;
+            font-size: 22px;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .product {
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(50, 30, 20, .07);
+            transition: .25s;
+        }
+
+        .product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(50, 30, 20, .12);
+        }
+
+        .product-image {
+            height: 190px;
+            background: linear-gradient(135deg, #d7b49a, #8b604b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 65px;
+        }
+
+        .product-content {
+            padding: 18px;
+        }
+
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .product-price {
+            color: #a95f2e;
+            font-weight: bold;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        .product-description {
+            color: #83756d;
+            font-size: 13px;
+            line-height: 1.8;
+            min-height: 48px;
+            margin-bottom: 15px;
+        }
+
+        .add-button {
+            width: 100%;
+            border: none;
+            background: #4a2c20;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: .2s;
+        }
+
+        .add-button:hover {
+            background: #6a4030;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 50px 20px;
+            color: #8a7c73;
+            display: none;
+        }
+
+        /* Cart */
+        .cart-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .45);
+            z-index: 10;
+            display: none;
+        }
+
+        .cart-overlay.show {
+            display: block;
+        }
+
+        .cart {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: min(420px, 100%);
+            height: 100vh;
+            background: white;
+            z-index: 11;
+            transform: translateX(100%);
+            transition: .3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart.show {
+            transform: translateX(0);
+        }
+
+        .cart-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .cart-header h2 {
+            font-size: 20px;
+        }
+
+        .close-cart {
+            border: none;
+            background: #f3efeb;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .cart-item-price {
+            color: #a95f2e;
+            font-size: 13px;
+        }
+
+        .quantity {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quantity button {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: #f0e9e3;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .cart-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .checkout {
+            width: 100%;
+            border: none;
+            padding: 15px;
+            background: #4a2c20;
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 800px) {
+            .products {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 550px) {
+            header {
+                padding: 24px 15px;
+            }
+
+            .header-content {
+                align-items: flex-start;
+            }
+
+            .brand h1 {
+                font-size: 23px;
+            }
+
+            .cart-button {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            main {
+                margin-top: 20px;
+                padding: 0 12px;
+            }
+
+            .products {
+                grid-template-columns: 1fr;
+            }
+
+            .product-image {
+                height: 170px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-content">
+        <div class="brand">
+            <h1>☕ کافه روما</h1>
+            <p>طعم خوب، لحظه‌های خوب</p>
+        </div>
+
+        <button class="cart-button" onclick="openCart()">
+            🛒 سبد سفارش
+            <span id="cartCount">0</span>
+        </button>
+    </div>
+</header>
+
+<main>
+
+    <div class="search-box">
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="جستجوی نوشیدنی، دسر و ..."
+            oninput="renderProducts()"
+        >
+    </div>
+
+    <div class="categories">
+        <button class="category active" data-category="all">
+            همه
+        </button>
+
+        <button class="category" data-category="hot">
+            ☕ قهوه گرم
+        </button>
+
+        <button class="category" data-category="cold">
+            🧊 قهوه سرد
+        </button>
+
+        <button class="category" data-category="tea">
+            🍵 چای و دمنوش
+        </button>
+
+        <button class="category" data-category="drink">
+            🍹 نوشیدنی
+        </button>
+
+        <button class="category" data-category="dessert">
+            🍰 دسر
+        </button>
+    </div>
+
+    <h2 class="section-title">منوی کافه</h2>
+
+    <div class="products" id="products"></div>
+
+    <div class="empty" id="empty">
+        <h3>موردی پیدا نشد 😕</h3>
+        <p>عبارت دیگری را جستجو کنید.</p>
+    </div>
+
+</main>
+
+<!-- Cart -->
+<div class="cart-overlay" id="overlay" onclick="closeCart()"></div>
+
+<div class="cart" id="cart">
+
+    <div class="cart-header">
+        <h2>🛒 سفارش شما</h2>
+
+        <button class="close-cart" onclick="closeCart()">
+            ×
+        </button>
+    </div>
+
+    <div class="cart-items" id="cartItems">
+    </div>
+
+    <div class="cart-footer">
+
+        <div class="total">
+            <span>مجموع</span>
+            <span id="totalPrice">۰ تومان</span>
+        </div>
+
+        <button class="checkout" onclick="checkout()">
+            ثبت سفارش
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+    const products = [
+
+        {
+            id: 1,
+            name: "اسپرسو",
+            category: "hot",
+            price: 80000,
+            emoji: "☕",
+            description: "قهوه‌ای غلیظ و خوش‌عطر با عصاره‌گیری تازه."
+        },
+
+        {
+            id: 2,
+            name: "آمریکانو",
+            category: "hot",
+            price: 90000,
+            emoji: "☕",
+            description: "اسپرسو با آب داغ، ساده و کلاسیک."
+        },
+
+        {
+            id: 3,
+            name: "لاته",
+            category: "hot",
+            price: 120000,
+            emoji: "🥛",
+            description: "ترکیب اسپرسو، شیر بخار داده شده و فوم شیر."
+        },
+
+        {
+            id: 4,
+            name: "کاپوچینو",
+            category: "hot",
+            price: 120000,
+            emoji: "☕",
+            description: "اسپرسو با شیر و فوم خامه‌ای."
+        },
+
+        {
+            id: 5,
+            name: "موکا",
+            category: "hot",
+            price: 130000,
+            emoji: "🍫",
+            description: "ترکیب جذاب اسپرسو، شکلات و شیر."
+        },
+
+        {
+            id: 6,
+            name: "آیس لاته",
+            category: "cold",
+            price: 130000,
+            emoji: "🧊",
+            description: "لاته خنک همراه با یخ، مناسب روزهای گرم."
+        },
+
+        {
+            id: 7,
+            name: "آیس آمریکانو",
+            category: "cold",
+            price: 100000,
+            emoji: "🧊",
+            description: "اسپرسو، آب سرد و یخ."
+        },
+
+        {
+            id: 8,
+            name: "آیس موکا",
+            category: "cold",
+            price: 140000,
+            emoji: "🍫",
+            description: "موکای شکلاتی خنک با یخ."
+        },
+
+        {
+            id: 9,
+            name: "چای ماسالا",
+            category: "tea",
+            price: 100000,
+            emoji: "🍵",
+            description: "چای هندی با شیر و ترکیبی از ادویه‌های معطر."
+        },
+
+        {
+            id: 10,
+            name: "چای سبز",
+            category: "tea",
+            price: 70000,
+            emoji: "🍵",
+            description: "چای سبز خوش‌عطر و سبک."
+        },
+
+        {
+            id: 11,
+            name: "موهیتو",
+            category: "drink",
+            price: 120000,
+            emoji: "🍹",
+            description: "نوشیدنی خنک با لیمو، نعناع و یخ."
+        },
+
+        {
+            id: 12,
+            name: "لیموناد",
+            category: "drink",
+            price: 100000,
+            emoji: "🍋",
+            description: "لیموناد تازه و خنک."
+        },
+
+        {
+            id: 13,
+            name: "چیزکیک",
+            category: "dessert",
+            price: 150000,
+            emoji: "🍰",
+            description: "چیزکیک خامه‌ای با طعم کلاسیک."
+        },
+
+        {
+            id: 14,
+            name: "تیرامیسو",
+            category: "dessert",
+            price: 160000,
+            emoji: "🍰",
+            description: "دسر ایتالیایی با قهوه، ماسکارپونه و کاکائو."
+        },
+
+        {
+            id: 15,
+            name: "براونی شکلاتی",
+            category: "dessert",
+            price: 140000,
+            emoji: "🍫",
+            description: "براونی شکلاتی نرم و تازه."
+        }
+
+    ];
+
+    let currentCategory = "all";
+
+    let cart = [];
+
+
+    function formatPrice(price) {
+
+        return new Intl.NumberFormat("fa-IR").format(price) + " تومان";
+
+    }
+
+
+    function renderProducts() {
+
+        const container = document.getElementById("products");
+
+        const search = document
+            .getElementById("searchInput")
+            .value
+            .trim()
+            .toLowerCase();
+
+        const filtered = products.filter(product => {
+
+            const categoryMatch =
+                currentCategory === "all" ||
+                product.category === currentCategory;
+
+            const searchMatch =
+                product.name.toLowerCase().includes(search) ||
+                product.description.toLowerCase().includes(search);
+
+            return categoryMatch && searchMatch;
+
+        });
+
+
+        container.innerHTML = "";
+
+        document.getElementById("empty").style.display =
+            filtered.length === 0 ? "block" : "none";
+
+
+        filtered.forEach(product => {
+
+            const element = document.createElement("div");
+
+            element.className = "product";
+
+            element.innerHTML = `
+
+                <div class="product-image">
+                    ${product.emoji}
+                </div>
+
+                <div class="product-content">
+
+                    <div class="product-header">
+
+                        <div class="product-name">
+                            ${product.name}
+                        </div>
+
+                        <div class="product-price">
+                            ${formatPrice(product.price)}
+                        </div>
+
+                    </div>
+
+                    <div class="product-description">
+                        ${product.description}
+                    </div>
+
+                    <button
+                        class="add-button"
+                        onclick="addToCart(${product.id})"
+                    >
+                        افزودن به سفارش
+                    </button>
+
+                </div>
+
+            `;
+
+            container.appendChild(element);
+
+        });
+
+    }
+
+
+    function addToCart(id) {
+
+        const existing = cart.find(item => item.id === id);
+
+        if (existing) {
+
+            existing.quantity++;
+
+        } else {
+
+            const product = products.find(item => item.id === id);
+
+            cart.push({
+                ...product,
+                quantity: 1
+            });
+
+        }
+
+        updateCart();
+
+    }
+
+
+    function changeQuantity(id, amount) {
+
+        const item = cart.find(item => item.id === id);
+
+        if (!item) return;
+
+        item.quantity += amount;
+
+        if (item.quantity <= 0) {
+
+            cart = cart.filter(item => item.id !== id);
+
+        }
+
+        updateCart();
+
+    }
+
+
+    function updateCart() {
+
+        const container = document.getElementById("cartItems");
+
+        container.innerHTML = "";
+
+        let total = 0;
+
+        let count = 0;
+
+
+        cart.forEach(item => {
+
+            total += item.price * item.quantity;
+
+            count += item.quantity;
+
+
+            const element = document.createElement("div");
+
+            element.className = "cart-item";
+
+            element.innerHTML = `
+
+                <div class="cart-item-info">
+
+                    <div class="cart-item-name">
+                        ${item.name}
+                    </div>
+
+                    <div class="cart-item-price">
+                        ${formatPrice(item.price)}
+                    </div>
+
+                </div>
+
+                <div class="quantity">
+
+                    <button onclick="changeQuantity(${item.id}, 1)">
+                        +
+                    </button>
+
+                    <span>
+                        ${item.quantity}
+                    </span>
+
+                    <button onclick="changeQuantity(${item.id}, -1)">
+                        −
+                    </button>
+
+                </div>
+
+            `;
+
+            container.appendChild(element);
+
+        });
+
+
+        if (cart.length === 0) {
+
+            container.innerHTML = `
+                <div style="
+                    text-align:center;
+                    padding:50px 10px;
+                    color:#999;
+                ">
+                    سبد سفارش خالی است ☕
+                </div>
+            `;
+
+        }
+
+
+        document.getElementById("totalPrice").textContent =
+            formatPrice(total);
+
+        document.getElementById("cartCount").textContent =
+            count;
+
+    }
+
+
+    function openCart() {
+
+        document
+            .getElementById("cart")
+            .classList.add("show");
+
+        document
+            .getElementById("overlay")
+            .classList.add("show");
+
+    }
+
+
+    function closeCart() {
+
+        document
+            .getElementById("cart")
+            .classList.remove("show");
+
+        document
+            .getElementById("overlay")
+            .classList.remove("show");
+
+    }
+
+
+    function checkout() {
+
+        if (cart.length === 0) {
+
+            alert("سبد سفارش شما خالی است.");
+
+            return;
+
+        }
+
+        alert("سفارش شما با موفقیت ثبت شد ☕");
+
+        cart = [];
+
+        updateCart();
+
+        closeCart();
+
+    }
+
+
+    // Category buttons
+
+    document
+        .querySelectorAll(".category")
+        .forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                document
+                    .querySelectorAll(".category")
+                    .forEach(btn =>
+                        btn.classList.remove("active")
+                    );
+
+                button.classList.add("active");
+
+                currentCategory =
+                    button.dataset.category;
+
+                renderProducts();
+
+            });
+
+        });
+
+
+    // Initial render
+
+    renderProducts();
+
+    updateCart();
+
+</script>
+
+</body>
+</html>
