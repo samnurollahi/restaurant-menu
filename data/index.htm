@@ -1,25 +1,1196 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
 
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>منوی رستوران</title>
+<title>رستوران نارنج | منوی آنلاین</title>
 
-    <link rel="stylesheet" href="/style.css">
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    :root {
+        --primary: #e85d04;
+        --primary-dark: #c94d00;
+        --dark: #202020;
+        --gray: #777;
+        --light: #f7f7f7;
+        --white: #ffffff;
+        --border: #eeeeee;
+        --success: #2e9d59;
+    }
+
+    body {
+        font-family: Tahoma, Arial, sans-serif;
+        background: #f7f7f7;
+        color: var(--dark);
+        line-height: 1.7;
+    }
+
+    /* ---------------- HEADER ---------------- */
+
+    header {
+        background:
+            linear-gradient(
+                rgba(0,0,0,.65),
+                rgba(0,0,0,.65)
+            ),
+            linear-gradient(135deg, #e85d04, #9d3b00);
+
+        color: white;
+        padding: 35px 20px;
+        text-align: center;
+    }
+
+    .restaurant-logo {
+        font-size: 55px;
+        margin-bottom: 5px;
+    }
+
+    header h1 {
+        font-size: 30px;
+        margin-bottom: 5px;
+    }
+
+    header p {
+        color: #eee;
+        font-size: 14px;
+    }
+
+    /* ---------------- CONTAINER ---------------- */
+
+    .container {
+        max-width: 1100px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    /* ---------------- SEARCH ---------------- */
+
+    .search-box {
+        background: white;
+        padding: 15px;
+        border-radius: 16px;
+        margin-top: -35px;
+        position: relative;
+        box-shadow: 0 8px 25px rgba(0,0,0,.1);
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 14px 18px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        font-size: 15px;
+        outline: none;
+        direction: rtl;
+    }
+
+    .search-box input:focus {
+        border-color: var(--primary);
+    }
+
+    /* ---------------- CATEGORIES ---------------- */
+
+    .categories {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding: 20px 0;
+        scrollbar-width: none;
+    }
+
+    .categories::-webkit-scrollbar {
+        display: none;
+    }
+
+    .category {
+        border: none;
+        background: white;
+        padding: 10px 18px;
+        border-radius: 30px;
+        white-space: nowrap;
+        cursor: pointer;
+        font-size: 14px;
+        transition: .2s;
+        border: 1px solid var(--border);
+    }
+
+    .category:hover {
+        transform: translateY(-2px);
+    }
+
+    .category.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    /* ---------------- MENU GRID ---------------- */
+
+    .section-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 10px 0 18px;
+    }
+
+    .section-title h2 {
+        font-size: 21px;
+    }
+
+    .section-title span {
+        font-size: 13px;
+        color: var(--gray);
+    }
+
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+    }
+
+    /* ---------------- FOOD CARD ---------------- */
+
+    .food-card {
+        background: white;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,.06);
+        transition: .25s;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .food-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,.1);
+    }
+
+    .food-image {
+        height: 190px;
+        background: linear-gradient(135deg, #eee, #ddd);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 75px;
+        position: relative;
+    }
+
+    .badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: var(--primary);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+    }
+
+    .food-content {
+        padding: 16px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .food-content h3 {
+        font-size: 17px;
+        margin-bottom: 6px;
+    }
+
+    .description {
+        color: var(--gray);
+        font-size: 12px;
+        min-height: 45px;
+    }
+
+    .food-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 15px;
+    }
+
+    .price {
+        font-weight: bold;
+        color: var(--primary);
+        font-size: 16px;
+    }
+
+    .price small {
+        color: #999;
+        font-size: 10px;
+        font-weight: normal;
+    }
+
+    .add-btn {
+        border: none;
+        background: var(--primary);
+        color: white;
+        padding: 8px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: .2s;
+    }
+
+    .add-btn:hover {
+        background: var(--primary-dark);
+    }
+
+    /* ---------------- CART ---------------- */
+
+    .cart {
+        position: fixed;
+        left: 20px;
+        bottom: 20px;
+        z-index: 1000;
+    }
+
+    .cart-button {
+        width: 62px;
+        height: 62px;
+        border-radius: 50%;
+        border: none;
+        background: var(--primary);
+        color: white;
+        font-size: 25px;
+        cursor: pointer;
+        box-shadow: 0 8px 25px rgba(0,0,0,.25);
+        position: relative;
+    }
+
+    .cart-count {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: #222;
+        color: white;
+        width: 23px;
+        height: 23px;
+        border-radius: 50%;
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* ---------------- CART PANEL ---------------- */
+
+    .cart-panel {
+        position: fixed;
+        top: 0;
+        left: -400px;
+        width: 380px;
+        max-width: 90%;
+        height: 100vh;
+        background: white;
+        z-index: 2000;
+        box-shadow: 5px 0 30px rgba(0,0,0,.2);
+        transition: .3s;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .cart-panel.open {
+        left: 0;
+    }
+
+    .cart-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .cart-header h2 {
+        font-size: 19px;
+    }
+
+    .close-cart {
+        border: none;
+        background: #f3f3f3;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    .cart-items {
+        flex: 1;
+        overflow-y: auto;
+        padding: 15px;
+    }
+
+    .cart-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .cart-item-icon {
+        font-size: 30px;
+    }
+
+    .cart-item-info {
+        flex: 1;
+    }
+
+    .cart-item-info h4 {
+        font-size: 13px;
+    }
+
+    .cart-item-info span {
+        font-size: 11px;
+        color: var(--gray);
+    }
+
+    .quantity {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .quantity button {
+        width: 25px;
+        height: 25px;
+        border: none;
+        background: #eee;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .cart-footer {
+        padding: 20px;
+        border-top: 1px solid var(--border);
+    }
+
+    .total {
+        display: flex;
+        justify-content: space-between;
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .checkout {
+        width: 100%;
+        padding: 13px;
+        border: none;
+        border-radius: 12px;
+        background: var(--success);
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    /* ---------------- EMPTY ---------------- */
+
+    .empty {
+        text-align: center;
+        padding: 50px 20px;
+        color: #999;
+    }
+
+    .empty div {
+        font-size: 50px;
+        margin-bottom: 10px;
+    }
+
+    /* ---------------- FOOTER ---------------- */
+
+    footer {
+        text-align: center;
+        color: #999;
+        padding: 40px 20px 100px;
+        font-size: 12px;
+    }
+
+    /* ---------------- RESPONSIVE ---------------- */
+
+    @media (max-width: 850px) {
+        .menu-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 550px) {
+        header {
+            padding: 30px 15px;
+        }
+
+        header h1 {
+            font-size: 24px;
+        }
+
+        .container {
+            padding: 15px;
+        }
+
+        .menu-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .food-image {
+            height: 180px;
+        }
+
+        .cart {
+            left: 15px;
+            bottom: 15px;
+        }
+    }
+</style>
+```
+
 </head>
 
 <body>
 
-    <h1>منوی رستوران 🍔</h1>
+<!-- HEADER -->
+<header>
+    <div class="restaurant-logo">🍊</div>
+    <h1>رستوران نارنج</h1>
+    <p>غذاهای تازه، خوشمزه و باکیفیت</p>
+</header>
 
-    <div id="menu">
-        در حال بارگذاری...
+
+<main class="container">
+
+    <!-- SEARCH -->
+    <div class="search-box">
+        <input
+            type="text"
+            id="search"
+            placeholder="🔍 جستجوی غذا..."
+            oninput="searchFoods()"
+        >
     </div>
 
-    <script src="/app.js"></script>
+
+    <!-- CATEGORIES -->
+    <div class="categories">
+
+        <button
+            class="category active"
+            onclick="filterCategory('all', this)"
+        >
+            همه
+        </button>
+
+        <button
+            class="category"
+            onclick="filterCategory('pizza', this)"
+        >
+            🍕 پیتزا
+        </button>
+
+        <button
+            class="category"
+            onclick="filterCategory('burger', this)"
+        >
+            🍔 برگر
+        </button>
+
+        <button
+            class="category"
+            onclick="filterCategory('food', this)"
+        >
+            🍛 غذای ایرانی
+        </button>
+
+        <button
+            class="category"
+            onclick="filterCategory('drink', this)"
+        >
+            🥤 نوشیدنی
+        </button>
+
+        <button
+            class="category"
+            onclick="filterCategory('dessert', this)"
+        >
+            🍰 دسر
+        </button>
+
+    </div>
+
+
+    <!-- TITLE -->
+    <div class="section-title">
+        <h2>منوی رستوران</h2>
+        <span id="foodCount">0 غذا</span>
+    </div>
+
+
+    <!-- MENU -->
+    <div id="menu" class="menu-grid"></div>
+
+</main>
+
+
+<!-- CART BUTTON -->
+<div class="cart">
+    <button class="cart-button" onclick="openCart()">
+        🛒
+        <span class="cart-count" id="cartCount">0</span>
+    </button>
+</div>
+
+
+<!-- CART PANEL -->
+<div id="cartPanel" class="cart-panel">
+
+    <div class="cart-header">
+        <h2>🛒 سبد سفارش</h2>
+
+        <button
+            class="close-cart"
+            onclick="closeCart()"
+        >
+            ×
+        </button>
+    </div>
+
+    <div id="cartItems" class="cart-items"></div>
+
+    <div class="cart-footer">
+
+        <div class="total">
+            <span>مبلغ کل</span>
+            <span id="totalPrice">۰ تومان</span>
+        </div>
+
+        <button
+            class="checkout"
+            onclick="checkout()"
+        >
+            ثبت سفارش
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- FOOTER -->
+<footer>
+    رستوران نارنج 🍊
+    <br>
+    از انتخاب شما سپاسگزاریم ❤️
+</footer>
+
+
+<script>
+
+    /*
+     * ============================
+     * MENU DATA
+     * ============================
+     *
+     * بعداً می‌توانی این قسمت را
+     * از فایل JSON یا API دریافت کنی.
+     */
+
+    const foods = [
+
+        {
+            id: 1,
+            name: "پیتزا مخصوص نارنج",
+            category: "pizza",
+            price: 320000,
+            icon: "🍕",
+            badge: "پرفروش",
+            description: "ژامبون، قارچ، فلفل دلمه‌ای، پنیر موزارلا و سس مخصوص"
+        },
+
+        {
+            id: 2,
+            name: "پیتزا پپرونی",
+            category: "pizza",
+            price: 280000,
+            icon: "🍕",
+            badge: "",
+            description: "پپرونی تند، پنیر موزارلا و سس مخصوص گوجه"
+        },
+
+        {
+            id: 3,
+            name: "چیزبرگر ویژه",
+            category: "burger",
+            price: 250000,
+            icon: "🍔",
+            badge: "ویژه",
+            description: "گوشت گریل شده، پنیر چدار، کاهو، گوجه و سس مخصوص"
+        },
+
+        {
+            id: 4,
+            name: "برگر کلاسیک",
+            category: "burger",
+            price: 210000,
+            icon: "🍔",
+            badge: "",
+            description: "گوشت گوساله، کاهو، گوجه، خیارشور و سس مخصوص"
+        },
+
+        {
+            id: 5,
+            name: "چلو کباب سلطانی",
+            category: "food",
+            price: 420000,
+            icon: "🍖",
+            badge: "پیشنهاد سرآشپز",
+            description: "کباب برگ و یک سیخ کوبیده به همراه برنج ایرانی"
+        },
+
+        {
+            id: 6,
+            name: "جوجه کباب",
+            category: "food",
+            price: 340000,
+            icon: "🍗",
+            badge: "",
+            description: "جوجه کباب زعفرانی به همراه برنج ایرانی و گوجه کبابی"
+        },
+
+        {
+            id: 7,
+            name: "چلو قورمه سبزی",
+            category: "food",
+            price: 270000,
+            icon: "🍛",
+            badge: "",
+            description: "قورمه سبزی اصیل ایرانی با گوشت گوساله و برنج"
+        },
+
+        {
+            id: 8,
+            name: "نوشابه",
+            category: "drink",
+            price: 35000,
+            icon: "🥤",
+            badge: "",
+            description: "نوشابه خنک"
+        },
+
+        {
+            id: 9,
+            name: "لیموناد خانگی",
+            category: "drink",
+            price: 75000,
+            icon: "🍋",
+            badge: "جدید",
+            description: "لیموناد تازه با لیموی طبیعی و نعناع"
+        },
+
+        {
+            id: 10,
+            name: "چیزکیک",
+            category: "dessert",
+            price: 120000,
+            icon: "🍰",
+            badge: "",
+            description: "چیزکیک خامه‌ای با سس توت‌فرنگی"
+        },
+
+        {
+            id: 11,
+            name: "براونی شکلاتی",
+            category: "dessert",
+            price: 110000,
+            icon: "🍫",
+            badge: "",
+            description: "براونی شکلاتی گرم با شکلات تلخ"
+        },
+
+        {
+            id: 12,
+            name: "بستنی مخصوص",
+            category: "dessert",
+            price: 95000,
+            icon: "🍨",
+            badge: "",
+            description: "بستنی وانیلی، شکلاتی و توت‌فرنگی"
+        }
+
+    ];
+
+
+    /*
+     * ============================
+     * VARIABLES
+     * ============================
+     */
+
+    let currentCategory = "all";
+
+    let cart = [];
+
+
+    /*
+     * ============================
+     * FORMAT PRICE
+     * ============================
+     */
+
+    function formatPrice(price) {
+
+        return new Intl.NumberFormat("fa-IR")
+            .format(price);
+
+    }
+
+
+    /*
+     * ============================
+     * DISPLAY MENU
+     * ============================
+     */
+
+    function renderMenu(list = foods) {
+
+        const menu = document.getElementById("menu");
+
+        document.getElementById("foodCount").innerText =
+            new Intl.NumberFormat("fa-IR").format(list.length)
+            + " غذا";
+
+
+        if (list.length === 0) {
+
+            menu.innerHTML = `
+                <div class="empty">
+                    <div>😕</div>
+                    غذایی پیدا نشد
+                </div>
+            `;
+
+            return;
+        }
+
+
+        menu.innerHTML = list.map(food => `
+
+            <div class="food-card">
+
+                <div class="food-image">
+
+                    ${food.icon}
+
+                    ${
+                        food.badge
+                        ?
+                        `<span class="badge">
+                            ${food.badge}
+                        </span>`
+                        :
+                        ""
+                    }
+
+                </div>
+
+
+                <div class="food-content">
+
+                    <h3>
+                        ${food.name}
+                    </h3>
+
+                    <p class="description">
+                        ${food.description}
+                    </p>
+
+
+                    <div class="food-bottom">
+
+                        <div class="price">
+
+                            ${formatPrice(food.price)}
+
+                            <small>
+                                تومان
+                            </small>
+
+                        </div>
+
+
+                        <button
+                            class="add-btn"
+                            onclick="addToCart(${food.id})"
+                        >
+                            + افزودن
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        `).join("");
+
+    }
+
+
+    /*
+     * ============================
+     * CATEGORY FILTER
+     * ============================
+     */
+
+    function filterCategory(category, button) {
+
+        currentCategory = category;
+
+
+        document
+            .querySelectorAll(".category")
+            .forEach(btn => {
+
+                btn.classList.remove("active");
+
+            });
+
+
+        button.classList.add("active");
+
+
+        applyFilters();
+
+    }
+
+
+    /*
+     * ============================
+     * SEARCH
+     * ============================
+     */
+
+    function searchFoods() {
+
+        applyFilters();
+
+    }
+
+
+    /*
+     * ============================
+     * APPLY FILTERS
+     * ============================
+     */
+
+    function applyFilters() {
+
+        const search =
+            document
+                .getElementById("search")
+                .value
+                .trim()
+                .toLowerCase();
+
+
+        let result = foods.filter(food => {
+
+            const categoryMatch =
+                currentCategory === "all"
+                ||
+                food.category === currentCategory;
+
+
+            const searchMatch =
+                food.name
+                    .toLowerCase()
+                    .includes(search)
+                ||
+                food.description
+                    .toLowerCase()
+                    .includes(search);
+
+
+            return categoryMatch && searchMatch;
+
+        });
+
+
+        renderMenu(result);
+
+    }
+
+
+    /*
+     * ============================
+     * ADD TO CART
+     * ============================
+     */
+
+    function addToCart(id) {
+
+        const food = foods.find(item => item.id === id);
+
+        const existing =
+            cart.find(item => item.id === id);
+
+
+        if (existing) {
+
+            existing.quantity++;
+
+        } else {
+
+            cart.push({
+
+                ...food,
+
+                quantity: 1
+
+            });
+
+        }
+
+
+        updateCart();
+
+    }
+
+
+    /*
+     * ============================
+     * CHANGE QUANTITY
+     * ============================
+     */
+
+    function changeQuantity(id, amount) {
+
+        const item =
+            cart.find(item => item.id === id);
+
+
+        if (!item) return;
+
+
+        item.quantity += amount;
+
+
+        if (item.quantity <= 0) {
+
+            cart =
+                cart.filter(item => item.id !== id);
+
+        }
+
+
+        updateCart();
+
+    }
+
+
+    /*
+     * ============================
+     * UPDATE CART
+     * ============================
+     */
+
+    function updateCart() {
+
+        const cartItems =
+            document.getElementById("cartItems");
+
+
+        const count =
+            cart.reduce(
+                (sum, item) => sum + item.quantity,
+                0
+            );
+
+
+        document.getElementById("cartCount")
+            .innerText = count;
+
+
+        if (cart.length === 0) {
+
+            cartItems.innerHTML = `
+
+                <div class="empty">
+
+                    <div>🛒</div>
+
+                    سبد خرید شما خالی است.
+
+                </div>
+
+            `;
+
+            document.getElementById("totalPrice")
+                .innerText = "۰ تومان";
+
+            return;
+
+        }
+
+
+        cartItems.innerHTML =
+            cart.map(item => `
+
+                <div class="cart-item">
+
+                    <div class="cart-item-icon">
+                        ${item.icon}
+                    </div>
+
+
+                    <div class="cart-item-info">
+
+                        <h4>
+                            ${item.name}
+                        </h4>
+
+                        <span>
+                            ${formatPrice(item.price)}
+                            تومان
+                        </span>
+
+                    </div>
+
+
+                    <div class="quantity">
+
+                        <button
+                            onclick="changeQuantity(${item.id}, 1)"
+                        >
+                            +
+                        </button>
+
+                        <span>
+                            ${item.quantity}
+                        </span>
+
+                        <button
+                            onclick="changeQuantity(${item.id}, -1)"
+                        >
+                            −
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `).join("");
+
+
+        const total =
+            cart.reduce(
+                (sum, item) =>
+                    sum + (item.price * item.quantity),
+                0
+            );
+
+
+        document.getElementById("totalPrice")
+            .innerText =
+            formatPrice(total)
+            + " تومان";
+
+    }
+
+
+    /*
+     * ============================
+     * OPEN CART
+     * ============================
+     */
+
+    function openCart() {
+
+        document
+            .getElementById("cartPanel")
+            .classList.add("open");
+
+    }
+
+
+    /*
+     * ============================
+     * CLOSE CART
+     * ============================
+     */
+
+    function closeCart() {
+
+        document
+            .getElementById("cartPanel")
+            .classList.remove("open");
+
+    }
+
+
+    /*
+     * ============================
+     * CHECKOUT
+     * ============================
+     */
+
+    function checkout() {
+
+        if (cart.length === 0) {
+
+            alert("سبد خرید شما خالی است.");
+
+            return;
+
+        }
+
+
+        const total =
+            cart.reduce(
+                (sum, item) =>
+                    sum + (item.price * item.quantity),
+                0
+            );
+
+
+        alert(
+            "سفارش شما با مبلغ "
+            +
+            formatPrice(total)
+            +
+            " تومان ثبت شد."
+        );
+
+
+        cart = [];
+
+        updateCart();
+
+        closeCart();
+
+    }
+
+
+    /*
+     * ============================
+     * INITIALIZE
+     * ============================
+     */
+
+    renderMenu();
+
+    updateCart();
+
+</script>
+
 
 </body>
-
 </html>

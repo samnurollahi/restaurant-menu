@@ -20,9 +20,7 @@
 bool isLoading = false;
 
 Adafruit_SSD1306 oled(128, 64, &Wire, -1);
-
 WebServer server(3000);
-
 OledLoader loader(oled);
 
 void setup()
@@ -40,9 +38,7 @@ void setup()
   Serial.println("LittleFS mounted!");
 
   File root = LittleFS.open("/");
-
   File file = root.openNextFile();
-
   while (file)
   {
     Serial.print("FILE: ");
@@ -55,19 +51,14 @@ void setup()
 
   WiFi.begin(ssid, password);
 
-  Serial.print("Connecting to WiFi");
   while (WiFi.status() != WL_CONNECTED)
   {
-    delay(500);
-    Serial.print(".");
+    delay(250);
     loader.update();
   }
-
-  Serial.println();
   Serial.println("WiFi connected!");
 
   server.serveStatic("/", LittleFS, "/");
-
   server.begin();
   Serial.println("Server started!");
 
@@ -81,6 +72,17 @@ void setup()
   oled.setCursor(20, 35);
   oled.println(myip);
   oled.display();
+
+  Serial.print("Flash size: ");
+  Serial.print(ESP.getFlashChipSize() / 1024 / 1024);
+  Serial.println(" MB");
+
+  Serial.print("Flash speed: ");
+  Serial.print(ESP.getFlashChipSpeed() / 1000000);
+  Serial.println(" MHz");
+
+  Serial.print("Free sketch space: ");
+  Serial.println(ESP.getFreeSketchSpace());
 }
 
 void loop()
