@@ -105,4 +105,11 @@ void loop()
 
     oled.display();
   }
+
+
+
+  if(Serial.available()) {
+    int data = Serial.read();
+    Serial.write("YES");
+  };
 }
