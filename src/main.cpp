@@ -1,10 +1,12 @@
 #include <Arduino.h>
 
 #include <Wire.h>
+#include <SPI.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
 #include <LittleFS.h>
+#include <SD.h>
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
@@ -16,6 +18,7 @@
 // #define password "samn1111"
 #define ssid "D-Link"
 #define password "4209368970"
+#define SD_SS 5
 
 bool isLoading = false;
 
@@ -27,6 +30,7 @@ void setup()
 {
   Serial.begin(9600);
   initOled(oled);
+
 
   loader.update();
   if (!LittleFS.begin(true))
@@ -57,6 +61,14 @@ void setup()
     loader.update();
   }
   Serial.println("WiFi connected!");
+
+ if (!SD.begin(SD_SS))
+  {
+    Serial.println("SD Card mount failed!");
+    return;
+  }
+
+  Serial.println("SD Card mounted!");
 
   server.serveStatic("/", LittleFS, "/");
   server.begin();
@@ -106,9 +118,8 @@ void loop()
     oled.display();
   }
 
-
-
-  if(Serial.available()) {
+  if (Serial.available())
+  {
     int data = Serial.read();
     Serial.write("YES");
   };
